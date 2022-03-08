@@ -1,0 +1,41 @@
+import sqlite3
+import psycopg2
+import pytest
+
+
+PG_CONECT = {
+    'dbname': 'movies_database',
+    'user': 'app',
+    'password': '123qwe',
+    'host': '127.0.0.1',
+    'port': 5433,
+    'options': '-c search_path=content',
+}
+
+
+def Sqllite_ch(table: str) -> int:
+    connect = sqlite3.connect('db.sqlite')
+    cursor = connect.cursor()
+    cursor.execute("SELECT COUNT(*) FROM %s ;" % (table))
+    sq = cursor.fetchone()
+    return int(sq[0])
+
+
+def PG_check(table: str) -> int:
+    connect = psycopg2.connect(**PG_CONECT)
+    cursor = connect.cursor()
+    cursor.execute("SELECT COUNT(*) FROM content.%s ;" % (table))
+    sq = cursor.fetchone()
+    return int(sq[0])
+
+
+@pytest.mark.parametrize('table', [
+    ('film_work'),
+    ('person'),
+    ('person_film_work'),
+    ('genre_film_work'),
+    ('genre'),
+],)
+def test_SQL(table: str):
+    """Тест бызы PG на соответствие SQLlite."""
+    assert Sqllite_ch(table) == PG_check(table)
