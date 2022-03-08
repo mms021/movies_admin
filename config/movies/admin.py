@@ -20,10 +20,11 @@ class FilmworkAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description', 'id')
 
 
-class PersonFilmWorkInline(admin.TabularInline):
-    model = PersonFilmWork
-
-
+@admin.register(PersonFilmWork)
+class PersonAdmin(admin.ModelAdmin):
+    pass
+    
+    
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
     pass
